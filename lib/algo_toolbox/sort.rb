@@ -7,7 +7,7 @@ class Array
   # 1. move the element backwards in the array until the previous element is less than the current element
 
   def insertion_sort
-    (1...self.length).each do |j|
+    (1...length).each do |j|
       key = self[j]
       i = j - 1
       while i >= 0 && self[i] > key
@@ -80,10 +80,10 @@ class Array
         end
       end
     }
-    (self.length / 2).step(1, -1).each do |j|
+    (length / 2).step(1, -1).each do |j|
       max_heapify[j, self.length]
     end
-    (self.length - 1).step(2, -1).each do |k|
+    (length - 1).step(2, -1).each do |k|
       self[k], self[1] = self[1], self[k]
       max_heapify[1, k]
     end
@@ -111,5 +111,35 @@ class Array
       quicksort(q + 1, to)
     end
     self
+  end
+
+  #
+  # Counting Sort
+  #
+  # Algorithm:
+  #   1. k = the max element of the array
+  #   2. create an intermediate array c with a number of elements equal to k + 1
+  #   3. scan the unsorted array, and add 1 to the array c at the index of the value
+  #   4. scanning the unsorted array backwards:
+  #     a. insert the element from the unsorted array into the final sorted array,
+  #     b. at the index coming from the intermediate array c
+  #     c. and reduce the element at c by one
+  #
+  # Caveat: the array must only contain values >= 0
+  #
+  # @return [Array] sorted array using the counting sort method
+  #
+  def counting_sort
+    k = max + 1
+    b = (length).times.map { nil }
+    c = k.times.map { 0 }
+    each { |value| c[value] += 1 }
+    c = c.each.with_index { |value, index| index > 0 && c[index] += c[index - 1] }
+    # needed to preserve stability of array
+    (length - 1).downto(0).each do |j|
+      b[c[self[j]] - 1] = self[j]
+      c[self[j]] -= 1
+    end
+    b
   end
 end
